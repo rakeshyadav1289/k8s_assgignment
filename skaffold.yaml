@@ -1,0 +1,22 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: flask-express
+build:
+  local:
+    push: false
+  artifacts:
+  - image: frontend
+    context: frontend
+  - image: backend
+    context: backend
+
+deploy:
+  helm:
+    releases:
+    - name: mongodb
+      chartPath: charts/mongodb
+    - name: backend
+      chartPath: charts/backend
+    - name: frontend
+      chartPath: charts/frontend

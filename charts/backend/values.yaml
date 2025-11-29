@@ -1,0 +1,10 @@
+image:
+  repository: backend
+  tag: "latest"
+  pullPolicy: Never
+
+service:
+  port: 5000
+
+mongo:
+  uri: "mongodb://mongodb-service:27017/mydb"
