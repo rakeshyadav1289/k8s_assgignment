@@ -1,0 +1,48 @@
+STEP 1 — Install Requirements
+----Install Minikube
+sudo snap install kubectl --classic
+----Install kubectl
+sudo snap install kubectl --classic
+----Install Docker
+(Required so Minikube can build images)
+Install Helm
+sudo snap install helm --classic
+install Skaffold
+sudo snap install skaffold --classic
+
+STEP 2 — Start Minikube
+minikube start
+Enable ingress:
+minikube addons enable ingress
+minikube addons enable metrics-server
+STEP 3 — Tell Docker to build inside Minikube
+eval $(minikube -p minikube docker-env)
+
+This ensures Docker images you build are visible to Kubernetes inside Minikube.
+
+STEP 4 — Build Docker Images
+
+From project root folder:
+
+Build frontend image:
+docker build -t frontend ./frontend
+Build backend image:
+docker build -t backend ./backend
+
+STEP 5 — Add TLS for Ingress
+Generate certificate:
+openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+  -keyout app.local.key -out app.local.crt \
+  -subj "/CN=app.local/O=app.local"
+
+Create Kubernetes TLS secret:
+kubectl create secret tls app-local-tls \
+  --cert=app.local.crt --key=app.local.key
+  Add host entry:
+echo "$(minikube ip) app.local" | sudo tee -a /etc/hosts
+
+STEP 6 — Deploy EVERYTHING using Skaffold
+
+Just run:
+
+skaffold dev
